@@ -2,11 +2,11 @@
 import { onMounted, ref } from 'vue'
 import { api } from '../api'
 const lanes = ref<any[]>([])
-onMounted(async () => { lanes.value = (await api('/refills/full?location_id=1')).lanes })
+onMounted(async () => { lanes.value = (await api('/refills/view/full?location_id=1')).lanes })
 </script>
 <template>
   <h1>满仓</h1>
-  <p class="sub">缺口为 0 的货道（无需补货）</p>
+  <p class="sub">缺口为 0 的货道（无需补货）· 按当前货道现算</p>
   <div class="card">
     <table>
       <thead><tr><th>货道</th><th>商品</th><th>库存</th><th>在途</th><th>容量</th></tr></thead>

@@ -31,5 +31,9 @@ class RefillOrder(Base):
     __tablename__ = "refill_orders"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     location_id: Mapped[int] = mapped_column(ForeignKey("locations.id"))
+    generation: Mapped[int] = mapped_column(Integer, default=1, server_default="1")
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    # 冻结快照：生成当时的逐行补量/状态，之后货道再怎么改都不回写这里
     lines_json: Mapped[str] = mapped_column(Text, default="[]")
+    # 逐行签名：读时用它判定库内行文本是否被截短/改脏（只标注，不修复）
+    line_sigs_json: Mapped[str] = mapped_column(Text, default="{}", server_default="{}")
