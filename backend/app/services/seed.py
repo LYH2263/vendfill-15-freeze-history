@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 from app.models.models import Lane, Location, Sale
+from app.services.refill_service import freeze_order
 
 def seed_if_empty(db: Session) -> None:
     if (db.scalar(select(func.count()).select_from(Location)) or 0) > 0:
@@ -25,3 +26,5 @@ def seed_if_empty(db: Session) -> None:
     for i, lid in enumerate(lane_ids):
         db.add(Sale(lane_id=lid, qty=2 + i, sold_at=now - timedelta(hours=i)))
     db.commit()
+    # 种子即冻结首单：A1 容量20/库存5/在途0 → 补量 15，供与后续新单并排对照。
+    freeze_order(db, loc.id)

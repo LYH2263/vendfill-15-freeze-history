@@ -28,8 +28,11 @@ class Sale(Base):
     sold_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
 class RefillOrder(Base):
+    """冻结的补货单：生成即定型，任何代码路径不得改写 lines_json/integrity_json。"""
     __tablename__ = "refill_orders"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     location_id: Mapped[int] = mapped_column(ForeignKey("locations.id"))
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     lines_json: Mapped[str] = mapped_column(Text, default="[]")
+    # 生成时一次性写入的逐行哈希 + 汇总哈希，用于读出时识别库内漂移；只写一次，永不更新。
+    integrity_json: Mapped[str] = mapped_column(Text, default="")
